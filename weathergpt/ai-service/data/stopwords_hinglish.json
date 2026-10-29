@@ -1,0 +1,17 @@
+{
+  "_comment": "Common Hinglish (Hindi written in Latin script) words used for language detection",
+  "words": [
+    "kya", "hai", "hain", "kal", "aaj", "abhi", "barish", "baarish", "mausam",
+    "garmi", "thand", "thandi", "hawa", "dhoop", "badal", "toofan", "bijli",
+    "andhi", "aandhi", "kab", "kahan", "kitna", "kaisa", "kaisi", "kaise",
+    "batao", "bata", "chahiye", "rahega", "rahegi", "hoga", "hogi", "hua",
+    "padega", "milega", "ayega", "ayegi", "nahi", "nahin", "achha", "theek",
+    "sahi", "galat", "zyada", "kam", "bahut", "thoda", "jyada", "bilkul",
+    "zaroor", "shayad", "lagta", "lagti", "lagti", "dilli", "mumbai", "pune",
+    "bangalore", "chennai", "hyderabad", "kolkata", "jaipur", "ahmedabad",
+    "baarish", "badal", "baadal", "dhund", "kohra", "sardi", "garmi",
+    "tapman", "nami", "aardrata", "toofan", "baarish", "barf", "ola",
+    "chale", "chalegi", "jayenge", "jaana", "rehna", "suniye", "suno",
+    "bhaiya", "didi", "bhai", "yaar", "dost"
+  ]
+}

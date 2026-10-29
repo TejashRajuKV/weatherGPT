@@ -1,0 +1,506 @@
+{
+  "accuracy": 0.8019,
+  "macro_f1": 0.7809,
+  "n_test": 6900,
+  "per_language": {
+    "bn": {
+      "accuracy": 0.8495,
+      "n": 93
+    },
+    "en": {
+      "accuracy": 0.8119,
+      "n": 2892
+    },
+    "gu": {
+      "accuracy": 0.662,
+      "n": 71
+    },
+    "hi": {
+      "accuracy": 0.8201,
+      "n": 1017
+    },
+    "hi-Latn": {
+      "accuracy": 0.8395,
+      "n": 1564
+    },
+    "kn": {
+      "accuracy": 0.7143,
+      "n": 77
+    },
+    "ml": {
+      "accuracy": 0.4648,
+      "n": 71
+    },
+    "mr": {
+      "accuracy": 0.75,
+      "n": 736
+    },
+    "mr-Latn": {
+      "accuracy": 1.0,
+      "n": 33
+    },
+    "ta": {
+      "accuracy": 0.6384,
+      "n": 177
+    },
+    "te": {
+      "accuracy": 0.7456,
+      "n": 169
+    }
+  },
+  "per_intent": {
+    "advisory": {
+      "precision": 0.7637795275590551,
+      "recall": 0.7533980582524272,
+      "f1-score": 0.7585532746823069,
+      "support": 515.0
+    },
+    "alerts": {
+      "precision": 0.9008097165991903,
+      "recall": 0.9175257731958762,
+      "f1-score": 0.9090909090909091,
+      "support": 485.0
+    },
+    "bye": {
+      "precision": 1.0,
+      "recall": 0.38095238095238093,
+      "f1-score": 0.5517241379310345,
+      "support": 21.0
+    },
+    "climate": {
+      "precision": 0.8892857142857142,
+      "recall": 0.6955307262569832,
+      "f1-score": 0.780564263322884,
+      "support": 358.0
+    },
+    "clothing": {
+      "precision": 1.0,
+      "recall": 0.9961977186311787,
+      "f1-score": 0.9980952380952381,
+      "support": 263.0
+    },
+    "cold_wave": {
+      "precision": 0.8571428571428571,
+      "recall": 0.8135593220338984,
+      "f1-score": 0.8347826086956521,
+      "support": 236.0
+    },
+    "commute": {
+      "precision": 0.7317073170731707,
+      "recall": 0.6766917293233082,
+      "f1-score": 0.703125,
+      "support": 266.0
+    },
+    "current": {
+      "precision": 0.5034293552812071,
+      "recall": 0.7281746031746031,
+      "f1-score": 0.5952960259529603,
+      "support": 504.0
+    },
+    "fallback": {
+      "precision": 0.37662337662337664,
+      "recall": 0.6170212765957447,
+      "f1-score": 0.46774193548387094,
+      "support": 47.0
+    },
+    "feels_like": {
+      "precision": 0.788546255506608,
+      "recall": 0.7649572649572649,
+      "f1-score": 0.7765726681127982,
+      "support": 234.0
+    },
+    "fog": {
+      "precision": 0.8836363636363637,
+      "recall": 0.9878048780487805,
+      "f1-score": 0.9328214971209213,
+      "support": 246.0
+    },
+    "forecast": {
+      "precision": 0.7151767151767152,
+      "recall": 0.7747747747747747,
+      "f1-score": 0.7437837837837837,
+      "support": 444.0
+    },
+    "greeting": {
+      "precision": 0.5526315789473685,
+      "recall": 0.5526315789473685,
+      "f1-score": 0.5526315789473685,
+      "support": 38.0
+    },
+    "heatwave": {
+      "precision": 0.8818565400843882,
+      "recall": 0.8293650793650794,
+      "f1-score": 0.8548057259713702,
+      "support": 252.0
+    },
+    "humidity": {
+      "precision": 0.9926739926739927,
+      "recall": 0.9409722222222222,
+      "f1-score": 0.966131907308378,
+      "support": 288.0
+    },
+    "jogging": {
+      "precision": 0.7242798353909465,
+      "recall": 0.676923076923077,
+      "f1-score": 0.6998011928429424,
+      "support": 260.0
+    },
+    "outdoor": {
+      "precision": 0.785,
+      "recall": 0.5772058823529411,
+      "f1-score": 0.6652542372881356,
+      "support": 272.0
+    },
+    "plants": {
+      "precision": 1.0,
+      "recall": 0.6813725490196079,
+      "f1-score": 0.8104956268221575,
+      "support": 204.0
+    },
+    "rain": {
+      "precision": 0.7481259370314842,
+      "recall": 0.8113821138211382,
+      "f1-score": 0.7784711388455539,
+      "support": 615.0
+    },
+    "snow": {
+      "precision": 0.8710801393728222,
+      "recall": 0.9090909090909091,
+      "f1-score": 0.8896797153024911,
+      "support": 275.0
+    },
+    "thanks": {
+      "precision": 0.65625,
+      "recall": 0.6774193548387096,
+      "f1-score": 0.6666666666666666,
+      "support": 31.0
+    },
+    "thunder": {
+      "precision": 0.8909774436090225,
+      "recall": 0.8061224489795918,
+      "f1-score": 0.8464285714285714,
+      "support": 294.0
+    },
+    "umbrella": {
+      "precision": 0.8953488372093024,
+      "recall": 0.9956896551724138,
+      "f1-score": 0.9428571428571428,
+      "support": 232.0
+    },
+    "uv_index": {
+      "precision": 1.0,
+      "recall": 0.8017241379310345,
+      "f1-score": 0.8899521531100478,
+      "support": 232.0
+    },
+    "wind": {
+      "precision": 0.9505703422053232,
+      "recall": 0.8680555555555556,
+      "f1-score": 0.9074410163339383,
+      "support": 288.0
+    },
+    "accuracy": 0.8018840579710145,
+    "macro avg": {
+      "precision": 0.8143572738163565,
+      "recall": 0.7693817228166747,
+      "f1-score": 0.7809107206398848,
+      "support": 6900.0
+    },
+    "weighted avg": {
+      "precision": 0.8189503408888724,
+      "recall": 0.8018840579710145,
+      "f1-score": 0.8050674065829427,
+      "support": 6900.0
+    }
+  },
+  "top_confusions": [
+    {
+      "expected": "forecast",
+      "predicted": "current",
+      "count": 88
+    },
+    {
+      "expected": "current",
+      "predicted": "forecast",
+      "count": 84
+    },
+    {
+      "expected": "advisory",
+      "predicted": "commute",
+      "count": 51
+    },
+    {
+      "expected": "climate",
+      "predicted": "rain",
+      "count": 48
+    },
+    {
+      "expected": "jogging",
+      "predicted": "advisory",
+      "count": 44
+    },
+    {
+      "expected": "outdoor",
+      "predicted": "jogging",
+      "count": 44
+    },
+    {
+      "expected": "plants",
+      "predicted": "rain",
+      "count": 37
+    },
+    {
+      "expected": "commute",
+      "predicted": "current",
+      "count": 36
+    },
+    {
+      "expected": "outdoor",
+      "predicted": "forecast",
+      "count": 35
+    },
+    {
+      "expected": "feels_like",
+      "predicted": "cold_wave",
+      "count": 31
+    }
+  ],
+  "threshold_sweep": [
+    {
+      "threshold": 0.3,
+      "coverage": 0.8857,
+      "accuracy_when_used": 0.8668
+    },
+    {
+      "threshold": 0.4,
+      "coverage": 0.8357,
+      "accuracy_when_used": 0.8878
+    },
+    {
+      "threshold": 0.5,
+      "coverage": 0.771,
+      "accuracy_when_used": 0.91
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 0.6845,
+      "accuracy_when_used": 0.9367
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 0.5999,
+      "accuracy_when_used": 0.9553
+    },
+    {
+      "threshold": 0.8,
+      "coverage": 0.5065,
+      "accuracy_when_used": 0.9708
+    }
+  ],
+  "misclassified_examples": [
+    {
+      "text": "is it good to sow wheat in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in bhoal <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it good to sow wheat in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "heatwave"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in hennai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> tomorow",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is i safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "is it safe to fly in <loc> <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "kya <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray arna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya agle hafte <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya agle hafte <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya agle hafte <loc> mein fasal pr spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "kya <t> <loc> mein fasal par spray karna theek rahega",
+      "expected": "advisory",
+      "predicted": "jogging"
+    },
+    {
+      "text": "<loc> mein kheti ke liye mausam kaisa hai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "<loc> mein kheti k liye mausam kaisa hai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "<loc> mein kheti ke liye mausam kaisa hai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "<loc> mein kheti ke liye mausam kaisa hai",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "<loc> mein kheti ke liye mausam kaisa hai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    },
+    {
+      "text": "<loc> mein kheti ke liye mausamm kaisa hai <t>",
+      "expected": "advisory",
+      "predicted": "commute"
+    }
+  ],
+  "n_total_rows": 6900,
+  "n_intents": 25,
+  "split": "5-fold cross-validation grouped by template/keyword (unseen patterns in every test fold)",
+  "note": "Measured on the author's own wording; real-world accuracy will be lower. Add real questions with --custom."
+}

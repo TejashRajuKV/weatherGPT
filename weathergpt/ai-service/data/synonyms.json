@@ -1,0 +1,59 @@
+{
+  "_comment": "Maps variant surface forms to canonical English tokens used in NLP rules",
+  "rain": [
+    "baarish", "barish", "varsham", "mazha", "mele", "varsha", "paaus", "paus",
+    "rainfall", "precipitation", "downpour", "drizzle", "showers", "baadal barsna"
+  ],
+  "weather": [
+    "mausam", "hawamaan", "vaayu", "aabohawa", "kaalam", "nilam", "havaman",
+    "weatherman", "climate today", "conditions"
+  ],
+  "temperature": [
+    "tapman", "taapman", "ushna", "temp", "heat", "garmi", "sardi", "thanda",
+    "garm", "thand"
+  ],
+  "wind": [
+    "hawa", "vayu", "kaatru", "gaali", "gust", "breeze", "pavana", "pawan",
+    "angin", "aandhi", "toofan"
+  ],
+  "fog": [
+    "dhund", "kohra", "punai", "mist", "haze", "foggy", "dhuandh"
+  ],
+  "forecast": [
+    "bhavishyavani", "agla", "upcoming", "prediction", "outlook", "prognosis"
+  ],
+  "today": [
+    "aaj", "aj", "abhi", "is waqt", "abhi abhi", "right now", "at this moment"
+  ],
+  "tomorrow": [
+    "kal", "aane wala kal", "next day", "parso nahi kal"
+  ],
+  "snow": [
+    "barf", "baraf", "himapaat", "snowfall", "hail", "ola", "olaavrishti"
+  ],
+  "storm": [
+    "toofan", "tufaan", "andhi", "aandhi", "cyclone", "hurricane", "typhoon",
+    "tempest", "squall"
+  ],
+  "humidity": [
+    "nami", "aardrata", "umid", "muggy", "sticky", "damp", "moisture"
+  ],
+  "umbrella": [
+    "chhatri", "chhatri chahiye", "baarish ke liye", "raincoat", "chhata"
+  ],
+  "agriculture": [
+    "khet", "fasal", "kisan", "kheti", "farming", "crop", "paddy", "wheat",
+    "tur", "jowar", "bajra", "sugarcane", "cotton"
+  ],
+  "fishing": [
+    "machli pakadna", "machchli", "machhli", "maasemaar", "trawler", "seafaring"
+  ],
+  "heatwave": [
+    "garmi ki leher", "loo", "lu", "heat stroke", "heat exhaustion", "sunstroke",
+    "tapti garmi", "bahut garmi"
+  ],
+  "cold wave": [
+    "sardi ki leher", "sheet leher", "sheetalahar", "biting cold", "freezing",
+    "bahut thand"
+  ]
+}
