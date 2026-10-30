@@ -46,6 +46,18 @@ import difflib
 from datetime import date, timedelta
 from typing import Optional
 
+try:  # optional feature engines (activity scoring, crop calendar, explainer)
+    from services import scoring as _scoring
+    from services import crops as _crops
+    from services import explainer as _explainer
+except Exception:  # pragma: no cover - keeps nlp usable standalone
+    try:
+        import scoring as _scoring
+        import crops as _crops
+        import explainer as _explainer
+    except Exception:
+        _scoring = _crops = _explainer = None
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Settings
 # ─────────────────────────────────────────────────────────────────────────────
@@ -552,6 +564,28 @@ def parse_time(query: str, today: Optional[date] = None) -> dict:
     return out("today", explicit=False)
 
 
+_MORNING_RE = r"\bmorning\b|\bsubah\b|सुबह|सकाळ| सकाळी|பாலைய|ఉదయం|ಬೆಳಗ್ಗೆ|രാവിലെ|સવારે|ਸਵੇਰ|ସକାଳ|\\bfajr\\b"
+_AFTERNOON_RE = r"\bafternoon\b|\bdopahar\b|दोपहर|दुपार|மதியம்|మధ్యాహ్నం|ಮಧ್ಯಾಹ್ನ|ഉച്ചയ്ക്ക്|બપોરે|ਦੁਪਹਿਰ|ମଧ୍ୟାହ୍ନ"
+_EVENING_RE = r"\bevening\b|\bshaam\b|\bsandhya\b|शाम|सांज|संध्या| evening|సాయంత్రం|சாயந்திரம்|ಸಂಜೆ|വൈകുന്നേരം|સાંજ|ਸ਼ਾਮ|ସନ୍ଧାନ"
+_NIGHT_RE = r"\bat night\b|\bonight\b|\broz raat\b|रात|रात्री|இரவு|రాత్రి|ರಾತ್ರಿ|രാത്രി|રાત|ਰਾਤ|ରାତି"
+
+
+def detect_tod(query: str) -> Optional[str]:
+    q = normalize(query)
+    if re.search(_MORNING_RE, q):   return "morning"
+    if re.search(_AFTERNOON_RE, q): return "afternoon"
+    if re.search(_EVENING_RE, q):   return "evening"
+    if re.search(_NIGHT_RE, q):     return "night"
+    return None
+
+
+_TOD_HOURS = {"morning": (5, 12), "afternoon": (12, 17), "evening": (17, 22), "night": (22, 5)}
+
+
+def tod_window(tod: Optional[str]):
+    return _TOD_HOURS.get(tod) if tod else None
+
+
 def extract_time_range(query: str) -> str:
     """Backwards-compatible: just the label."""
     return parse_time(query)["label"]
@@ -562,6 +596,28 @@ def extract_time_range(query: str) -> str:
 # normalised text. Non-English keywords sit in the same lists.
 # ─────────────────────────────────────────────────────────────────────────────
 INTENT_RULES = [
+    ("explain", [r"\bexplain\b", r"what does .* mean", r"what .*\bmean\b", r"kya matlab|क्या मतलब|म्हणजे काय|என்ன அர்த்தம்|ఏమంటే",
+                 r"means? what|matlab kya|what is meant"]),
+    ("crop_calendar", [r"\bcrop\b", r"\bcrops\b", r"wheat|gehu|गेहूं", r"tomato|tamatar|टमाटर", r"cotton|kapas|कपास",
+                        r"onion|pyaz|कांदा", r"soybean|soya", r"sugarcane|ganna|ऊस",
+                        r"flowering stage|grain filling|tillering|fruit set|boll|pod fill|nursery|transplant",
+                        r"frost risk|any frost", r"crop stage|फसल|पीक|पिक|పంట|பயிர்"],),
+    ("health_index", [r"health index|comfort index|humidex|heat index", r"air quality|\baqi\b|pollution|प्रदूषण|वायू गुणवत्ता",
+                       r"asthma|allergy|allergies|pollen|shwas|दम|एलर्जी", r"dehydration|heat stress|hydration|water intake",
+                       r"outdoor workout safe|air.*breath"]),
+    ("compare", [r"\bcompar(?:e|ison)\b", r"\bvs\b", r"versus", r"hotter than|colder than|wetter than|drier than|cooler than",
+                  r"more rain|less rain|higher temp", r"than last (?:year|month|october|november|week)", r"तुलना|तुलना"],),
+    ("travel", [r"\b(?:from)\b.*\b(?:to)\b.*(weather|rain|fog|drive|travel|commute)", r"route weather",
+                r" commute ", r"driving to", r"trip to", r"travel to", r"departure", r"best time to (?:leave|start|drive|travel|commute)",
+                r"traffic.*(rain|weather)", r"highway.*(rain|fog|weather)", r"सफर|प्रवास|मुक्काम|ప్రయాణ|பயண"],),
+    ("activity_plan", [r"(?:can i|should i|is it (?:ok|okay|good|fine|safe)(?:ly)? to|good time to|best time to|worth)\b.{0,30}"
+                       r"(cycling|cycle|run|jog|walk|trek|hike|camp|picnic|swim|play|match|event|wedding|party|"
+                       r"dry clothes|laundry|wash|spray|sow|harvest|fish|solar|photograph|kite|paragliding|marathon|cricket|football)",
+                       r"(?:go cycling|dry clothes|best time.*dry|time to wash)",
+                       r"सायकल|सायकलिंग|कपडे सुकव|चालण्या|जॉग"],),
+    ("alerts_personal", [r"alert me|notify me|warn me|send me (?:an )?alert|my alert|mujhe bata(?:na|o)|मुझे बताना|मला सांगा|सूचित करा|सूचित करो",
+                          r"if wind exceeds|if temp(?:erature)? (?:crosses|above|goes above)|if rain between|when .* (?:exceeds|crosses)",
+                          r"alert if|notify if|warn if|remind me if"],),
     ("uv_index", [r"\buv\b", r"uv index", r"ultraviolet", r"sunburn", r"sun.*safe", r"सनबर्न|धूप.*तेज"]),
     ("humidity", [r"\bhumid", r"muggy", r"sticky", r"moisture", r"\bdamp\b", r"\bsweat(?:y|ing)?\b", r"नमी|उमस|आर्द्रता|दमट|ஈரப்பதம்|తేమ|ಆರ್ದ್ರತೆ|ഈർപ്പം|ભેજ|ਨਮੀ|ଆର୍ଦ୍ରତା"]),
     ("feels_like", [r"feel.*like", r"feels? (?:hotter|colder|warmer|cooler)", r"(?:hotter|colder|warmer|cooler).*\bfeel\b", r"कितनी (?:गर्मी|ठंड) लगेगी", r"feels.*outside", r"how.*\bhot\b", r"how.*\bcold\b",
@@ -641,6 +697,24 @@ ACTIVITY_RULES = [
     ("fish",    [r"\bfish", r"go.*\bsea\b", r"trawler", r"\bboat", r"मछली|मच्छीमार|समुद्र"]),
     ("fly",     [r"\bfly\b", r"\bflying\b", r"flight", r"\bairport", r"उड़ान|विमान"]),
     ("flood",   [r"flood", r"waterlog", r"बाढ़|बाढ"]),
+]
+
+
+_ACTIVITY_PATTERNS = [
+    ("cycling", r"cycl|bike ride|सायकल"),
+    ("running", r"run(?:ning)?\b|jog|मैराथन|जॉग|दौड"),
+    ("laundry", r"dry clothes|laundry|wash.*cloth|कपडे सुकव|कपड़े.*सुक|धुलाई|బట్టలు|உடல்"),
+    ("spraying", r"spray|pesticide|कीटनाशक|फवारणी|छिड़काव|तपाणें"),
+    ("picnic", r"picnic"),
+    ("event", r"event|wedding|party|function|कार्यक्रम|समारोह|लग्न"),
+    ("cricket", r"cricket|football|match|खेल|स्पोर्ट्स"),
+    ("fishing", r"fishing|boat|मासे|मछली"),
+    ("trekking", r"trek|hike"),
+    ("walking", r"walk|stroll|टहल|चालण्या"),
+    ("swimming", r"swim"),
+    ("solar", r"solar"),
+    ("photography", r"photograph"),
+    ("camping", r"camp\b"),
 ]
 
 
@@ -744,6 +818,32 @@ def parse_query(query: str, context: Optional[dict] = None) -> dict:
         if intent in ("current", "forecast", "rain", "humidity", "wind", "feels_like", "heatwave", "cold_wave"):
             intent = "climate"
 
+    # ── feature extractors: travel route, activity, crop + stage ──────────
+    extra_route = None
+    if intent == "travel":
+        m = re.search(r"([a-z\u0900-\u0DFF]{2,25})\s+to\s+([a-z\u0900-\u0DFF]{2,25})", q)
+        if m:
+            a, b = m.group(1), m.group(2)
+            stop = {"the", "my", "going", "driving", "from", "travel", "tomorrow", "today"}
+            if a not in stop and b not in stop:
+                extra_route = [a, b]
+    activity_key = None
+    if intent == "activity_plan":
+        for key, pat in _ACTIVITY_PATTERNS:
+            if re.search(pat, q):
+                activity_key = key
+                break
+        activity_key = activity_key or "general"
+    crop_key = stage_key = None
+    if _crops is not None:
+        crop_key = _crops.find_crop(q)
+        stage_key = _crops.find_stage(q)
+    if intent == "crop_calendar" and not crop_key and ctx.get("crop"):
+        crop_key = ctx["crop"]
+        context_used = True
+    if intent == "crop_calendar" and not stage_key and ctx.get("crop_stage"):
+        stage_key = ctx["crop_stage"]
+
     # inherit location / time from the conversation
     if intent not in _NEEDS_NO_LOCATION and not locations and not use_gps and ctx.get("location"):
         locations = [ctx["location"]]
@@ -761,6 +861,8 @@ def parse_query(query: str, context: Optional[dict] = None) -> dict:
     route = None
     if len(locations) >= 2 and re.search(r"\bfrom\b.*\bto\b|\bto\b.*\bfrom\b|\bvia\b|\broute\b|से.*तक", q):
         route = (locations[0], locations[1])
+    elif extra_route:
+        route = tuple(extra_route)
 
     return {
         "intent":       intent,
@@ -778,6 +880,12 @@ def parse_query(query: str, context: Optional[dict] = None) -> dict:
         "needs_location": needs_location,
         "context_used": context_used,
         "fetch":        _fetch_plan(intent, label, activity),
+        "tod":          detect_tod(query) or (ctx.get("tod") if context_used else None),
+        "route_names":  extra_route,
+        "activity_key": activity_key,
+        "crop":         crop_key or (ctx.get("crop") if context_used else None),
+        "crop_stage":   stage_key or (ctx.get("crop_stage") if context_used else None),
+        "compare_month": tinfo.get("month"),
         "raw_query":    query,
         "normalized":   q,
     }
@@ -792,6 +900,9 @@ def update_context(context: Optional[dict], parsed: dict) -> dict:
         if parsed.get("location"):
             ctx["location"] = parsed["location"]
         ctx["time_range"] = parsed.get("time_range", "today")
+    for k in ("tod", "activity_key", "crop", "crop_stage", "route_names"):
+        if parsed.get(k):
+            ctx[k] = parsed[k]
     return ctx
 
 
@@ -1708,12 +1819,53 @@ def _local_response(intent: str, parsed: dict, weather_data: dict, lang: str) ->
 # ─────────────────────────────────────────────────────────────────────────────
 # Main dispatcher
 # ─────────────────────────────────────────────────────────────────────────────
-def generate_response(intent: str, parsed: dict, weather_data: dict) -> str:
+def _shorten(text: str) -> str:
+    """Feature 9 — WhatsApp/SMS-style concise answer."""
+    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    keep = []
+    for l in lines:
+        low = l.lower()
+        if any(k in low for k in ("source:", "📡", "tip:", "ℹ️", "always follow",
+                                   "based on rainfall only")):
+            continue
+        keep.append(l)
+    head = keep[0] if keep else text.split(".")[0]
+    body = ""
+    import re as _re
+    for l in keep[1:]:
+        m = _re.search(r"(suitability \d+/100[^\n]*|Best slot[^\n]*|departure window[^\n]*|"
+                       r"IRRIGATE[^—\n]*|Rain window[^\n]*|FROST RISK[^\n]*|AQI \d+[^\n]*)", l, _re.I)
+        if m:
+            body = m.group(1)
+            break
+    out = head.rstrip(".")
+    if body:
+        out += ". " + body.rstrip(".") + "."
+    return out[:300]
+
+
+def generate_response(intent: str, parsed: dict, weather_data: dict, alerts: Optional[list] = None,
+                      short_mode: bool = False, crop: Optional[str] = None,
+                      crop_stage: Optional[str] = None, prefs: Optional[dict] = None) -> str:
     weather_data = weather_data or {}
     lang = parsed.get("language", "en")
     location = parsed.get("location") or "your location"
     domain = parsed.get("domain", "general")
     time_range = parsed.get("time_range", "today")
+
+    # ── new feature engines (activity planner, travel, crops, explain, compare, health) ──
+    try:
+        from services import features as _F
+    except Exception:
+        try:
+            import features as _F
+        except Exception:
+            _F = None
+    if _F is not None and intent in getattr(_F, "HANDLERS", {}):
+        kw = {"crop": crop, "stage": crop_stage} if intent == "crop_calendar" else {}
+        txt = _F.HANDLERS[intent](parsed, weather_data, location,
+                                  (parsed.get("note") or "").strip(), **kw)
+        return _shorten(txt) if short_mode else txt
 
     # social / non-weather intents
     if intent == "greeting":
@@ -1736,6 +1888,8 @@ def generate_response(intent: str, parsed: dict, weather_data: dict) -> str:
         return local
 
     english = _generate_english(intent, parsed, weather_data, location, domain, time_range)
+    if short_mode:
+        return _shorten(english)
     T = _i18n()
     if T is not None and lang in T.SUPPORTED:
         english += "\n\n" + T.s(lang, "english_only")
