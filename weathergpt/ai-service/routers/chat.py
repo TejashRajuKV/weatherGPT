@@ -4,7 +4,7 @@ from typing import Optional, List
 import httpx
 import os
 
-from services.nlp import parse_query, generate_response
+from services.nlp import parse_query, generate_response, update_context
 
 router = APIRouter()
 
@@ -22,6 +22,10 @@ class ChatRequest(BaseModel):
     language: Optional[str] = "en"
     history: Optional[List[Message]] = []
     context: Optional[dict] = None   # conversation context for follow-ups
+    short_mode: Optional[bool] = False          # feature 9: WhatsApp/SMS concise mode
+    crop: Optional[str] = None                  # feature 3: e.g. "wheat"
+    crop_stage: Optional[str] = None            # feature 3: e.g. "flowering"
+    prefs: Optional[dict] = None                # feature 4: personal alert-profile thresholds
 
 
 @router.post("/chat")
@@ -65,10 +69,18 @@ async def chat(req: ChatRequest):
                 elif "in_" in time_range and "_days" in time_range:
                     try: days = int(time_range.split("_")[1]) + 1
                     except Exception: days = 7
+                # crop calendar & activity planning need at least 5 days of hourly data
+                if intent == "crop_calendar":
+                    days = max(days, 5)
+                params = {"location": location, "days": min(days, 16)}
+                if intent in ("activity_plan", "crop_calendar", "travel", "health_index"):
+                    params["hourly"] = True
+                if intent == "health_index":
+                    params["air_quality"] = True
                 try:
                     r = await client.get(
                         f"{DATA_SERVICE_URL}/weather/forecast",
-                        params={"location": location, "days": min(days, 16)}
+                        params=params
                     )
                     weather_data["forecast"] = r.json() if r.status_code == 200 else {}
                 except Exception:
@@ -91,8 +103,43 @@ async def chat(req: ChatRequest):
                 except Exception:
                     weather_data["climate"] = {}
 
+        # Step 2b: extra locations — comparison (feature 6) and route legs (feature 2)
+        extra_locs = []
+        locs = parsed.get("locations") or []
+        if intent == "compare" and len(locs) >= 2:
+            extra_locs = locs[1:3]
+        elif intent == "travel" and parsed.get("route"):
+            extra_locs = [parsed["route"][1]]
+        elif len(locs) > 1 and intent not in ("current", "forecast", "rain"):
+            extra_locs = []
+        if extra_locs:
+            weather_data["multi"] = {}
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                for lx in [location] + list(extra_locs):
+                    try:
+                        p = {"location": lx, "days": 8}
+                        if intent == "travel":
+                            p["hourly"] = True
+                        r = await client.get(f"{DATA_SERVICE_URL}/weather/forecast", params=p)
+                        weather_data["multi"][lx] = r.json() if r.status_code == 200 else {}
+                    except Exception:
+                        weather_data["multi"][lx] = {}
+
+        # Step 2c: same-location historical archive for year-over-year comparison
+        if intent == "compare" and parsed.get("time_range", "").startswith("last_"):
+            try:
+                async with httpx.AsyncClient(timeout=15.0) as client:
+                    r = await client.get(f"{DATA_SERVICE_URL}/climate/history",
+                                         params={"location": location})
+                    weather_data["climate"] = r.json() if r.status_code == 200 else {}
+            except Exception:
+                weather_data["climate"] = {}
+
         # Step 3: Generate rule-based response
-        response_text = generate_response(intent, parsed, weather_data)
+        response_text = generate_response(intent, parsed, weather_data,
+                                          short_mode=req.short_mode,
+                                          crop=req.crop, crop_stage=req.crop_stage,
+                                          prefs=req.prefs)
 
         return {
             "response":      response_text,
@@ -101,7 +148,8 @@ async def chat(req: ChatRequest):
             "location":      location,
             "language":      parsed.get("language", "en"),
             "time_range":    parsed.get("time_range", "today"),
-            "context":       parsed,    # return for follow-up queries
+            "context":       update_context(req.context, parsed),  # session context for follow-ups
+            "parsed":        parsed,                                # raw parse for debugging/admin
         }
 
     except Exception as e:
